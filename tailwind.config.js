@@ -14,6 +14,7 @@ export default {
     extend: {
       height: {
         128: "45rem",
+        129: "50rem",
       },
       colors: {
         primary: {
@@ -29,6 +30,9 @@ export default {
           900: "#78350f",
           950: "#451a03",
         },
+
+        "dark-purple": "#EFE9DD",
+        "light-white": "#000000",
       },
     },
     fontFamily: {
