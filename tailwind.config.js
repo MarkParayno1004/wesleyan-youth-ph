@@ -32,7 +32,7 @@ export default {
         },
 
         "dark-purple": "#EFE9DD",
-        "light-white": "#000000",
+        "light-white": "#585858",
       },
     },
     fontFamily: {
