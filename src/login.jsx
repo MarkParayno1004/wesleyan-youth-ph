@@ -22,7 +22,7 @@ function Login() {
       if (role === "coordinator") {
         navigate("/coordinator-dashboard");
       } else if (role === "admin") {
-        navigate("/admin-dashboard");
+        navigate("/Admin-MainPage");
       } else {
         // If it's a different role, you can handle it here
         console.log("Unknown role:", role);
