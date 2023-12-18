@@ -3,10 +3,11 @@ import { useState } from "react";
 import control from "../assets/img/control.png";
 import logo from "../assets/img/youth-logo.png";
 import chartFill from "../assets/img/Chart_fill.png";
-const Dashboard = () => {
+const Attendees = () => {
   const [open, setOpen] = useState(true);
   const Menus = [
     { title: "Dashboard", src: "Chart_fill" },
+    { title: "Attendees", src: "Chart_fill"},
     { title: "Inbox" },
     { title: "Accounts", src: "User", gap: true },
     { title: "Schedule ", src: "Calendar" },
@@ -71,10 +72,7 @@ const Dashboard = () => {
           <div className="flex items-center">
             <div className="flex-none h-10 w-14"></div>
             <div className="grow h-10">
-              <h1 className="font-mono font-bold text-center text-white text-2xl">District Coordinator</h1>
-            </div>
-            <div className="flex-none h-10 w-25">
-              <button className="mr-20 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add User</button>
+              <h1 className="font-mono font-bold text-center text-white text-2xl">List of Attendees</h1>
             </div>
           </div>
           <div className="bg-dark-purple rounded-xl h-120 m-8 mt-6">
@@ -83,7 +81,7 @@ const Dashboard = () => {
                 <tr>
                   <th className="px-6 py-3">Name</th>
                   <th className="px-6 py-3">District</th>
-                  <th className="px-6 py-3">Email</th>
+                  <th className="px-6 py-3">Room Assignment</th>
                   <th className="px-6 py-3">Contact Number</th>
                 </tr>
               </thead>
@@ -169,4 +167,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Attendees;
