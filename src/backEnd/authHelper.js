@@ -45,7 +45,7 @@ export const handleLogin = async (email, password, navigate, setLoggedIn) => {
           navigate("/coordinator-dashboard");
           console.log("Navigated to Coordinator");
         } else if (role.toLowerCase() === "admin") {
-          navigate("/admin-dashboard");
+          navigate("/Admin-MainPage");
           console.log("Navigated to Admin");
         } else {
           // If it's a different role, you can handle it here
