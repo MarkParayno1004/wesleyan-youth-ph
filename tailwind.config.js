@@ -12,9 +12,9 @@ export default {
       },
     },
     extend: {
-      height: {
-        128: "45rem",
-        129: "50rem",
+      spacing: {
+        128: "90rem",
+        129: "90rem",
       },
       colors: {
         primary: {
