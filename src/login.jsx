@@ -39,7 +39,7 @@ function Login() {
       style={{ backgroundImage: `url(${bgimage})` }}
     >
       <div
-        className="md:container md:mx-auto h-128 rounded-2xl grid gap-4 grid-cols-2 flex items-center"
+        className="md:container md:mx-auto w-128 h-128 rounded-2xl grid gap-4 grid-cols-2 flex items-center"
         style={{
           backgroundColor: "#EFE9DD",
           boxShadow:

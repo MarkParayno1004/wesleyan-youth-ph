@@ -14,11 +14,11 @@ export default {
     extend: {
       spacing: {
         128: "100rem",
-        129: "90rem",
+        127: "60rem",
       },
       height: {
         100: "50rem",
-        128: "30rem"
+        128: "40rem"
       },
       colors: {
         primary: {
