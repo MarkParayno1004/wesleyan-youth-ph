@@ -8,7 +8,7 @@ const Dashboard = () => {
         <div className="bg-light-white p-2 mb-2 rounded-lg w-1/5">
           <h1 className="text-white">Total Number of Attendees: </h1>
         </div>
-        <div className="bg-light-white rounded-3xl w-128 pt-6">
+        <div className="bg-light-white rounded-3xl w-128 h-100 pt-6">
           <div className="flex items-center">
             <div className="flex-none h-10 w-14"></div>
             <div className="grow h-10">
@@ -21,11 +21,11 @@ const Dashboard = () => {
             </div>
             {showModal && (
               <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-                <div className="relative w-auto my-6 mx-auto max-w-3xl">
+                <div className="relative w-full my-6 mx-auto max-w-3xl">
                   <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                     <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
                       <h3 className="text-3xl font-semibold">
-                        Add User
+                        Add Coordinator
                       </h3>
                       <button
                         className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
@@ -44,7 +44,21 @@ const Dashboard = () => {
                       </div>
                       <div className="mb-4">
                         <label htmlFor="district" className="block text-sm font-bold text-gray-700">District:</label>
-                        <input type="text" id="district" name="district" placeholder="Manila" className="mt-1 p-2 w-full border rounded-md" />
+                        <select id="district" name="district" className="mt-1 p-2 w-full border rounded-md">
+                          <option value="sskld">SSKLD</option>
+                          <option value="neld">NELD</option>
+                          <option value="md">MD</option>
+                          <option value="bpd">BPD</option>
+                          <option value="pd">PD</option>
+                          <option value="encd">ENCD</option>
+                          <option value="ncpd">NCPD</option>
+                          <option value="nskld">NSKLD</option>
+                          <option value="cld">CLD</option>
+                          <option value="nwld">NWLD</option>
+                          <option value="cpld">CPLD</option>
+                          <option value="wncd">WNCD</option>
+                          <option value="nld">NLD</option>
+                        </select>
                       </div>
                       <div className="mb-4">
                         <label htmlFor="email" className="block text-sm font-bold text-gray-700">Email:</label>
@@ -69,7 +83,7 @@ const Dashboard = () => {
                         type="button"
                         onClick={() => setShowModal(false)}
                       >
-                        Add
+                        Add Coordinator
                       </button>
                     </div>
                   </div>
@@ -77,7 +91,7 @@ const Dashboard = () => {
               </div>
             )}
           </div>
-            <div className="bg-dark-purple rounded-xl h-100 m-8 mt-6">
+            <div className="bg-dark-purple rounded-xl h-90 m-8 mt-6">
               <table className="w-full text-lg rtl:text-right table-fixed">
                 <thead>
                   <tr>

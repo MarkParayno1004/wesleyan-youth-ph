@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Im
 //! Pages
 import Login from "./login";
 import MainPage from "./admin/admin-mainpage";
+import MainPageCoor from "./coordinator/coordinator-mainpage";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/Admin-MainPage" element={<MainPage />} />
+        <Route path="/Coordinator-MainPage" element={<MainPageCoor />}/>
       </Routes>
     </Router>
   );
