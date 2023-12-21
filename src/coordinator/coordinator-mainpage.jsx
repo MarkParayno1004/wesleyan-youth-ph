@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import Cattendees from "./coordinator-dashboard";
 import control from "../assets/img/control.png";
 import logo from "../assets/img/youth-logo.png";
 import chartFill from "../assets/img/Chart_fill.png";
