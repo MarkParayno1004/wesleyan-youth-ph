@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { handleLogin } from "./backEnd/authHelper"; // Update the path
+import { handleLogin } from "./backEnd/authHelper";
 
-//! Import Assets
 import "./assets/css/login/login.css";
 import bgimage from "./assets/img/wy.png";
 import youthLogo from "./assets/img/youth-logo.png";
@@ -20,7 +19,7 @@ function Login() {
     if (role) {
       // Redirect based on user role
       if (role === "coordinator") {
-        navigate("/coordinator-dashboard");
+        navigate("/Coordinator-MainPage");
       } else if (role === "admin") {
         navigate("/Admin-MainPage");
       } else {

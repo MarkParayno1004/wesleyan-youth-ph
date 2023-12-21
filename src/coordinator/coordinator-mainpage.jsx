@@ -4,12 +4,12 @@ import control from "../assets/img/control.png";
 import logo from "../assets/img/youth-logo.png";
 import chartFill from "../assets/img/Chart_fill.png";
 const MainPageCoor = () => {
-    const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(true);
 
-    //! to call the pages
-    const [showPage, setShowPage] = useState("");
-    return(
-        <div className="flex">
+  //! to call the pages
+  const [showPage, setShowPage] = useState("");
+  return (
+    <div className="flex">
       <div
         className={` ${
           open ? "w-72" : "w-20 "
@@ -49,11 +49,9 @@ const MainPageCoor = () => {
           </li>
         </ul>
       </div>
-      {showPage === "Dashboard" ? (
-        <Cattendees />
-      ) : null}
+      {showPage === "Dashboard" ? <Cattendees /> : null}
     </div>
-    );
+  );
 };
 
 export default MainPageCoor;

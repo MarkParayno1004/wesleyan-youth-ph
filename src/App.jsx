@@ -12,7 +12,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/Admin-MainPage" element={<MainPage />} />
-        <Route path="/Coordinator-MainPage" element={<MainPageCoor />}/>
+        <Route path="/Coordinator-MainPage" element={<MainPageCoor />} />
       </Routes>
     </Router>
   );
