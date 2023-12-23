@@ -1,4 +1,26 @@
+import React, {useState} from "react";
+
 const Attendees = () => {
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const itemsPerPage = 10; // Adjust as needed
+
+  const [formData, setFormData] = useState({
+    name: "",
+    district: "",
+    email: "",
+    phone: "",
+  });
+
+  const [attendees, setAttendees] = useState([]);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = attendees.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div className="flex">
     <div className="flex">
@@ -26,80 +48,37 @@ const Attendees = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="hover:bg-light-white hover:text-white text-center">
-                    <td className="px-6 py-3">daniel</td>
-                    <td className="px-6 py-3">cainta</td>
-                    <td className="px-6 py-3">daniel@gmail.com</td>
-                    <td className="px-6 py-3">0912345678</td>
-                  </tr>
-                  <tr className="hover:bg-light-white hover:text-white text-center">
-                    <td className="px-6 py-3">daniel</td>
-                    <td className="px-6 py-3">cainta</td>
-                    <td className="px-6 py-3">daniel@gmail.com</td>
-                    <td className="px-6 py-3">0912345678</td>
-                  </tr>
-                  <tr className="hover:bg-light-white hover:text-white text-center">
-                    <td className="px-6 py-3">daniel</td>
-                    <td className="px-6 py-3">cainta</td>
-                    <td className="px-6 py-3">daniel@gmail.com</td>
-                    <td className="px-6 py-3">0912345678</td>
-                  </tr>
-                  <tr className="hover:bg-light-white hover:text-white text-center">
-                    <td className="px-6 py-3">daniel</td>
-                    <td className="px-6 py-3">cainta</td>
-                    <td className="px-6 py-3">daniel@gmail.com</td>
-                    <td className="px-6 py-3">0912345678</td>
-                  </tr>
-                  <tr className="hover:bg-light-white hover:text-white text-center">
-                    <td className="px-6 py-3">daniel</td>
-                    <td className="px-6 py-3">cainta</td>
-                    <td className="px-6 py-3">daniel@gmail.com</td>
-                    <td className="px-6 py-3">0912345678</td>
-                  </tr>
-                  <tr className="hover:bg-light-white hover:text-white text-center">
-                    <td className="px-6 py-3">daniel</td>
-                    <td className="px-6 py-3">cainta</td>
-                    <td className="px-6 py-3">daniel@gmail.com</td>
-                    <td className="px-6 py-3">0912345678</td>
-                  </tr>
-                  <tr className="hover:bg-light-white hover:text-white text-center">
-                    <td className="px-6 py-3">daniel</td>
-                    <td className="px-6 py-3">cainta</td>
-                    <td className="px-6 py-3">daniel@gmail.com</td>
-                    <td className="px-6 py-3">0912345678</td>
-                  </tr>
-                  <tr className="hover:bg-light-white hover:text-white text-center">
-                    <td className="px-6 py-3">daniel</td>
-                    <td className="px-6 py-3">cainta</td>
-                    <td className="px-6 py-3">daniel@gmail.com</td>
-                    <td className="px-6 py-3">0912345678</td>
-                  </tr>
-                  <tr className="hover:bg-light-white hover:text-white text-center">
-                    <td className="px-6 py-3">daniel</td>
-                    <td className="px-6 py-3">cainta</td>
-                    <td className="px-6 py-3">daniel@gmail.com</td>
-                    <td className="px-6 py-3">0912345678</td>
-                  </tr>
-                  <tr className="hover:bg-light-white hover:text-white text-center">
-                    <td className="px-6 py-3">daniel</td>
-                    <td className="px-6 py-3">cainta</td>
-                    <td className="px-6 py-3">daniel@gmail.com</td>
-                    <td className="px-6 py-3">0912345678</td>
-                  </tr>
-                  <tr className="hover:bg-light-white hover:text-white text-center">
-                    <td className="px-6 py-3">daniel</td>
-                    <td className="px-6 py-3">cainta</td>
-                    <td className="px-6 py-3">daniel@gmail.com</td>
-                    <td className="px-6 py-3">0912345678</td>
-                  </tr>
-                  <tr className="hover:bg-light-white hover:text-white text-center">
-                    <td className="px-6 py-3">daniel</td>
-                    <td className="px-6 py-3">cainta</td>
-                    <td className="px-6 py-3">daniel@gmail.com</td>
-                    <td className="px-6 py-3">0912345678</td>
-                  </tr>
+                  {currentItems.map((attendees) => (
+                    <tr
+                      key={attendees.id}
+                      className="hover:bg-light-white hover:text-white text-center cursor-pointer"
+                    >
+                      <td className="px-6 py-3">{attendees.name}</td>
+                      <td className="px-6 py-3">{attendees.district}</td>
+                      <td className="px-6 py-3">{attendees.email}</td>
+                      <td className="px-6 py-3">{attendees.phone}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
+              <div className="flex justify-end p-6">
+                <div className="text-white">
+                  <button
+                    className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                    onClick={() => paginate(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                    onClick={() => paginate(currentPage + 1)}
+                    disabled={indexOfLastItem >= attendees.length}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
