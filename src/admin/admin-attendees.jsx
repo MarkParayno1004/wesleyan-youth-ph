@@ -1,17 +1,8 @@
-import React from "react";
+import React, {useState} from "react";
 
 const Attendees = () => {
-  const [selectedRow, setSelectedRow] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 10; // Adjust as needed
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = attendees.slice(indexOfFirstItem, indexOfLastItem);
-
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
 
   const [formData, setFormData] = useState({
     name: "",
@@ -21,6 +12,15 @@ const Attendees = () => {
   });
 
   const [attendees, setAttendees] = useState([]);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = attendees.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div className="flex">
     <div className="flex">
@@ -50,9 +50,8 @@ const Attendees = () => {
                 <tbody>
                   {currentItems.map((attendees) => (
                     <tr
-                      key={attendee.id}
+                      key={attendees.id}
                       className="hover:bg-light-white hover:text-white text-center cursor-pointer"
-                      onClick={() => setSelectedRow(true)}
                     >
                       <td className="px-6 py-3">{attendees.name}</td>
                       <td className="px-6 py-3">{attendees.district}</td>

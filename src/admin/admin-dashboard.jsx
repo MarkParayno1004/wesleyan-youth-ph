@@ -8,14 +8,6 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 10; // Adjust as needed
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = attendees.slice(indexOfFirstItem, indexOfLastItem);
-
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
   const [formData, setFormData] = useState({
     name: "",
     district: "",
@@ -31,6 +23,14 @@ const Dashboard = () => {
       ...formData,
       [name]: value,
     });
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = coordinators.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   const handleAddCoordinator = async () => {
@@ -240,7 +240,7 @@ const Dashboard = () => {
                   <button
                     className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     onClick={() => paginate(currentPage + 1)}
-                    disabled={indexOfLastItem >= attendees.length}
+                    disabled={indexOfLastItem >= coordinators.length}
                   >
                     Next
                   </button>
