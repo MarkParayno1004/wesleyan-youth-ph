@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { handleLogin } from "./backEnd/authHelper";
-
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "./firebase/firebase-config";
 import "./assets/css/login/login.css";
 import bgimage from "./assets/img/wy.png";
 import youthLogo from "./assets/img/youth-logo.png";
@@ -30,6 +31,17 @@ function Login() {
     } else {
       // Handle the case when user data or role is missing
       console.log("User data or role missing");
+    }
+  };
+
+  const handleResetPassword = async () => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+
+      setEmail("");
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error sending password reset email:", error.message);
     }
   };
 
@@ -153,6 +165,8 @@ function Login() {
                                 id="email"
                                 name="email"
                                 placeholder="name@email.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 className="mt-1 p-2 w-full border rounded-md"
                               />
                             </div>
@@ -169,6 +183,7 @@ function Login() {
                           <button
                             className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                             type="button"
+                            onClick={handleResetPassword}
                           >
                             Send
                           </button>

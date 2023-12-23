@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
 import { submitAddCoor } from "./admin-add-coor";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { firestore } from "../firebase/firebase-config";
+import { firestore, auth } from "../firebase/firebase-config";
 const Dashboard = () => {
   const [showModal, setShowModal] = React.useState(false);
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const Dashboard = () => {
   });
 
   const [coordinators, setCoordinators] = useState([]);
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,22 +39,37 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    const q = query(
-      collection(firestore, "users"),
-      where("role", "==", "coordinator")
-    );
-
-    // Subscribe to real-time updates
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const coordinatorsData = querySnapshot.docs.map((doc) => doc.data());
-      setCoordinators(coordinatorsData);
+    // Check the authentication status
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUserLoggedIn(!!user); // Update the userLoggedIn state based on user existence
     });
 
-    // Unsubscribe when the component unmounts
     return () => {
       unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    if (userLoggedIn) {
+      const q = query(
+        collection(firestore, "users"),
+        where("role", "==", "coordinator")
+      );
+
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const coordinatorsData = querySnapshot.docs.map((doc) => doc.data());
+        setCoordinators(coordinatorsData);
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [userLoggedIn]);
+
+  if (!userLoggedIn) {
+    return <p>Please log in to view the data.</p>;
+  }
   return (
     <div className="flex">
       <div className="flex">

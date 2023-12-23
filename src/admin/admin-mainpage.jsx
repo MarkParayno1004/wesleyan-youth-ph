@@ -1,15 +1,29 @@
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import Dashboard from "./admin-dashboard";
 import Attendees from "./admin-attendees";
 import control from "../assets/img/control.png";
 import logo from "../assets/img/youth-logo.png";
 import chartFill from "../assets/img/Chart_fill.png";
+import { auth } from "../firebase/firebase-config";
+import Login from "../login";
+
 const MainPage = () => {
   const [open, setOpen] = useState(true);
 
-  //! to call the pages
   const [showPage, setShowPage] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      // Use navigate function to navigate to the login page
+      navigate("/");
+    } catch (error) {
+      console.error("Error logging out:", error.message);
+    }
+  };
 
   return (
     <div className="flex">
@@ -60,13 +74,23 @@ const MainPage = () => {
               </button>
             </span>
           </li>
+          <li
+            className={`flex  rounded-md p-2 cursor-pointer hover:bg-black hover:text-white text-black text-sm items-center gap-x-4 `}
+          >
+            <img alt="Logout" />
+            <span className={`${!open && "hidden"} origin-left duration-200`}>
+              <button onClick={handleLogout}>Logout</button>
+            </span>
+          </li>
         </ul>
       </div>
       {showPage === "Dashboard" ? (
         <Dashboard />
-      ) : (
-        showPage === "Attendees" && <Attendees />
-      )}
+      ) : showPage === "Attendees" ? (
+        <Attendees />
+      ) : showPage === "Login" ? (
+        <Login />
+      ) : null}
     </div>
   );
 };
