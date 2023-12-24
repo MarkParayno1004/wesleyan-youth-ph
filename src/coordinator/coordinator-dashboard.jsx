@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { submitAddDelegate } from "./coordinator-add-delegate";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { firestore, auth } from "../firebase/firebase-config";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Cattendees = () => {
   const [showModal, setShowModal] = React.useState(false);
   const [selectedRow, setSelectedRow] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 10;
-
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     district: "",
@@ -38,121 +41,32 @@ const Cattendees = () => {
     }
   };
 
-  const attendees = [
-    {
-      id: 1,
-      name: "Daniel",
-      district: "Cainta",
-      email: "daniel@gmail.com",
-      phone: "0912345678",
-    },
-    {
-      id: 2,
-      name: "Daniel",
-      district: "Cainta",
-      email: "daniel@gmail.com",
-      phone: "0912345678",
-    },
-    {
-      id: 3,
-      name: "Daniel",
-      district: "Cainta",
-      email: "daniel@gmail.com",
-      phone: "0912345678",
-    },
-    {
-      id: 4,
-      name: "Daniel",
-      district: "Cainta",
-      email: "daniel@gmail.com",
-      phone: "0912345678",
-    },
-    {
-      id: 5,
-      name: "Daniel",
-      district: "Cainta",
-      email: "daniel@gmail.com",
-      phone: "0912345678",
-    },
-    {
-      id: 6,
-      name: "Daniel",
-      district: "Cainta",
-      email: "daniel@gmail.com",
-      phone: "0912345678",
-    },
-    {
-      id: 7,
-      name: "Daniel",
-      district: "Cainta",
-      email: "daniel@gmail.com",
-      phone: "0912345678",
-    },
-    {
-      id: 8,
-      name: "Daniel",
-      district: "Cainta",
-      email: "daniel@gmail.com",
-      phone: "0912345678",
-    },
-    {
-      id: 9,
-      name: "Daniel",
-      district: "Cainta",
-      email: "daniel@gmail.com",
-      phone: "0912345678",
-    },
-    {
-      id: 10,
-      name: "Daniel",
-      district: "Cainta",
-      email: "daniel@gmail.com",
-      phone: "0912345678",
-    },
-    {
-      id: 11,
-      name: "Daniel",
-      district: "Cainta",
-      email: "daniel@gmail.com",
-      phone: "0912345678",
-    },
-    {
-      id: 12,
-      name: "Daniel",
-      district: "Cainta",
-      email: "daniel@gmail.com",
-      phone: "0912345678",
-    },
-    {
-      id: 13,
-      name: "Daniel",
-      district: "Cainta",
-      email: "daniel@gmail.com",
-      phone: "0912345678",
-    },
-    {
-      id: 14,
-      name: "Daniel",
-      district: "Cainta",
-      email: "daniel@gmail.com",
-      phone: "0912345678",
-    },
-    {
-      id: 15,
-      name: "Daniel",
-      district: "Cainta",
-      email: "daniel@gmail.com",
-      phone: "0912345678",
-    },
-    {
-      id: 16,
-      name: "Daniel",
-      district: "Cainta",
-      email: "daniel@gmail.com",
-      phone: "0912345678",
-    },
-    // Add more attendees as needed
-  ];
+  const [attendees, setAttendees] = useState([]);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUserLoggedIn(!!user);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (userLoggedIn) {
+      const q = query(collection(firestore, "delegates"));
+
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const delegatesData = querySnapshot.docs.map((doc) => doc.data());
+        setAttendees(delegatesData);
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [userLoggedIn]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -161,6 +75,9 @@ const Cattendees = () => {
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+  if (!userLoggedIn) {
+    return <p>Please log in to view the data.</p>;
+  }
   return (
     <div className="flex">
       <div className="flex">
