@@ -1,14 +1,27 @@
 import { useState } from "react";
-
-import Cattendees from "./coordinator-dashboard";
 import control from "../assets/img/control.png";
 import logo from "../assets/img/youth-logo.png";
 import chartFill from "../assets/img/Chart_fill.png";
+import { auth } from "../firebase/firebase-config";
+import Cattendees from "./coordinator-dashboard";
+import { useNavigate } from "react-router-dom";
+
 const MainPageCoor = () => {
   const [open, setOpen] = useState(true);
 
-  //! to call the pages
   const [showPage, setShowPage] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      navigate("/");
+    } catch (error) {
+      console.error("Error logging out:", error.message);
+    }
+  };
+
   return (
     <div className="flex">
       <div
@@ -29,13 +42,6 @@ const MainPageCoor = () => {
               open && "rotate-[360deg]"
             }`}
           />
-          {/* <h1
-              className={`text-white origin-left font-medium text-xl duration-200 ${
-                !open && "scale-0"
-              }`}
-            >
-              Designer
-            </h1> */}
         </div>
         <ul className="pt-6">
           <li
@@ -46,6 +52,18 @@ const MainPageCoor = () => {
               <button onClick={() => setShowPage("Dashboard")}>
                 Attendees
               </button>
+            </span>
+          </li>
+          <li
+            className={`flex  rounded-md p-2 cursor-pointer hover:bg-black hover:text-white text-black text-sm items-center gap-x-4 `}
+          >
+            <img alt="Logout" />
+            <span
+              className={`${
+                !open && "hidden"
+              } origin-left duration-200 text-red-500`}
+            >
+              <button onClick={handleLogout}>Logout</button>
             </span>
           </li>
         </ul>
