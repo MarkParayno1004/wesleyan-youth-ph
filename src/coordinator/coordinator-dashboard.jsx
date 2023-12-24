@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { submitAddDelegate } from "./coordinator-add-delegate";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { firestore, auth } from "../firebase/firebase-config";
+import { collection, onSnapshot, query, where, doc } from "firebase/firestore";
+import { firestore, auth, db } from "../firebase/firebase-config";
 import { onAuthStateChanged } from "firebase/auth";
 
 const Cattendees = () => {
@@ -10,6 +10,7 @@ const Cattendees = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 10;
   const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const [userDistrict, setUserDistrict] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     district: "",
@@ -44,21 +45,43 @@ const Cattendees = () => {
   const [attendees, setAttendees] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       setUserLoggedIn(!!user);
+
+      if (user) {
+        const uid = user.uid;
+        const userRef = collection(db, "users");
+        const userQuery = query(userRef, where("uid", "==", uid));
+        const unsubscribeUser = onSnapshot(userQuery, (snapshot) => {
+          snapshot.forEach((doc) => {
+            const userData = doc.data();
+            setUserDistrict(userData.district);
+          });
+        });
+
+        return () => {
+          unsubscribeUser();
+        };
+      }
     });
 
     return () => {
-      unsubscribe();
+      unsubscribeAuth();
     };
   }, []);
 
   useEffect(() => {
-    if (userLoggedIn) {
-      const q = query(collection(firestore, "delegates"));
+    if (userLoggedIn && userDistrict) {
+      const q = query(
+        collection(firestore, "delegates"),
+        where("district", "==", userDistrict)
+      );
 
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const delegatesData = querySnapshot.docs.map((doc) => doc.data());
+        const delegatesData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
         setAttendees(delegatesData);
       });
 
@@ -66,7 +89,7 @@ const Cattendees = () => {
         unsubscribe();
       };
     }
-  }, [userLoggedIn]);
+  }, [userLoggedIn, userDistrict]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -302,7 +325,7 @@ const Cattendees = () => {
                             htmlFor="name"
                             className="block text-sm font-bold text-gray-700"
                           >
-                            Participant's Name:
+                            Participanteeee's Name:
                           </label>
                           <input
                             type="text"
