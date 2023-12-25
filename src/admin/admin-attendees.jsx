@@ -1,15 +1,63 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { collection, onSnapshot, query, where, doc } from "firebase/firestore";
+import { firestore, auth, db } from "../firebase/firebase-config";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Attendees = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
-  const itemsPerPage = 10; // Adjust as needed
-
+  const itemsPerPage = 10;
+  const [totalAttendees, setTotalAttendees] = useState(0);
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     district: "",
     email: "",
     phone: "",
   });
+  useEffect(() => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      setUserLoggedIn(!!user);
+
+      if (user) {
+        const uid = user.uid;
+        const userRef = collection(db, "users");
+        const userQuery = query(userRef, where("uid", "==", uid));
+        const unsubscribeUser = onSnapshot(userQuery, (snapshot) => {
+          snapshot.forEach((doc) => {
+            const userData = doc.data();
+            setUserDistrict(userData.district);
+          });
+        });
+
+        return () => {
+          unsubscribeUser();
+        };
+      }
+    });
+
+    return () => {
+      unsubscribeAuth();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (userLoggedIn) {
+      const q = query(collection(firestore, "delegates"));
+
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const delegatesData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setAttendees(delegatesData);
+        setTotalAttendees(delegatesData.length);
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [userLoggedIn]);
 
   const [attendees, setAttendees] = useState([]);
 
@@ -20,13 +68,17 @@ const Attendees = () => {
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
-
+  if (!userLoggedIn) {
+    return <p>Please log in to view the data.</p>;
+  }
   return (
     <div className="flex">
       <div className="flex">
         <div className="h-screen flex-1 p-7">
           <div className="bg-light-white p-2 mb-2 rounded-lg w-1/5">
-            <h1 className="text-white">Total Number of Attendees: </h1>
+            <h1 className="text-white">
+              Total Number of Attendees: {totalAttendees}
+            </h1>
           </div>
           <div className="bg-light-white rounded-3xl w-128 h-100 pt-6">
             <div className="flex items-center">
@@ -42,21 +94,25 @@ const Attendees = () => {
                 <thead>
                   <tr>
                     <th className="px-6 py-3">Name</th>
-                    <th className="px-6 py-3">District</th>
                     <th className="px-6 py-3">Room Assignment</th>
+                    <th className="px-6 py-3">Status</th>
+                    <th className="px-6 py-3">District</th>
+                    <th className="px-6 py-3">Email</th>
                     <th className="px-6 py-3">Contact Number</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {currentItems.map((attendees) => (
+                  {currentItems.map((attendee) => (
                     <tr
-                      key={attendees.id}
+                      key={attendee.id}
                       className="hover:bg-light-white hover:text-white text-center cursor-pointer"
                     >
-                      <td className="px-6 py-3">{attendees.name}</td>
-                      <td className="px-6 py-3">{attendees.district}</td>
-                      <td className="px-6 py-3">{attendees.email}</td>
-                      <td className="px-6 py-3">{attendees.phone}</td>
+                      <td className="px-6 py-3">{attendee.name}</td>
+                      <td className="px-6 py-3">{attendee.room}</td>
+                      <td className="px-6 py-3">{attendee.status}</td>
+                      <td className="px-6 py-3">{attendee.district}</td>
+                      <td className="px-6 py-3">{attendee.email}</td>
+                      <td className="px-6 py-3">{attendee.phone}</td>
                     </tr>
                   ))}
                 </tbody>
