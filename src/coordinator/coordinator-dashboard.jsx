@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { submitAddDelegate } from "./coordinator-add-delegate";
+import { submitAddDelegate, updateDelegate } from "./coordinator-add-delegate";
 import { collection, onSnapshot, query, where, doc } from "firebase/firestore";
 import { firestore, auth, db } from "../firebase/firebase-config";
 import { onAuthStateChanged } from "firebase/auth";
@@ -11,6 +11,8 @@ const Cattendees = () => {
   const itemsPerPage = 10;
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [userDistrict, setUserDistrict] = useState(null);
+  const [selectedAttendee, setSelectedAttendee] = useState({});
+  const [totalAttendees, setTotalAttendees] = useState(0);
   const [formData, setFormData] = useState({
     name: "",
     district: "",
@@ -19,6 +21,19 @@ const Cattendees = () => {
     status: "",
   });
 
+  const handleRowClick = (attendee) => {
+    setSelectedAttendee(attendee);
+    setFormData({
+      name: attendee.name || "",
+      district: attendee.district || "",
+      email: attendee.email || "",
+      phone: attendee.phone || "",
+      status: attendee.status || "",
+      room: attendee.room || "",
+    });
+    setSelectedRow(true);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -26,6 +41,26 @@ const Cattendees = () => {
       [name]: value,
     });
   };
+
+  const handleEdit = async () => {
+    try {
+      const attendeeId = selectedAttendee.id;
+      await updateDelegate(attendeeId, formData);
+
+      setFormData({
+        name: "",
+        district: "",
+        email: "",
+        phone: "",
+        status: "",
+        room: "",
+      });
+      setSelectedRow(false);
+    } catch (error) {
+      console.error("Error editing attendee:", error.message);
+    }
+  };
+
   const handleAddDelegate = async () => {
     try {
       await submitAddDelegate(formData);
@@ -83,6 +118,7 @@ const Cattendees = () => {
           ...doc.data(),
         }));
         setAttendees(delegatesData);
+        setTotalAttendees(delegatesData.length);
       });
 
       return () => {
@@ -106,7 +142,9 @@ const Cattendees = () => {
       <div className="flex">
         <div className="h-screen flex-1 p-7">
           <div className="bg-light-white p-2 mb-2 rounded-lg w-1/5">
-            <h1 className="text-white">Total Number of Attendees: </h1>
+            <h1 className="text-white">
+              Total Number of Attendees: {totalAttendees}
+            </h1>
           </div>
           <div className="bg-light-white rounded-3xl w-128 h-100 pt-6">
             <div className="flex items-center">
@@ -231,7 +269,7 @@ const Cattendees = () => {
                               type="text"
                               id="status"
                               name="status"
-                              placeholder="single"
+                              placeholder="Student"
                               className="mt-1 p-2 w-full border rounded-md"
                               onChange={handleChange}
                             />
@@ -264,6 +302,8 @@ const Cattendees = () => {
                 <thead>
                   <tr>
                     <th className="px-6 py-3">Name</th>
+                    <th className="px-6 py-3">Room Assignment</th>
+                    <th className="px-6 py-3">Status</th>
                     <th className="px-6 py-3">District</th>
                     <th className="px-6 py-3">Email</th>
                     <th className="px-6 py-3">Contact Number</th>
@@ -274,9 +314,11 @@ const Cattendees = () => {
                     <tr
                       key={attendee.id}
                       className="hover:bg-light-white hover:text-white text-center cursor-pointer"
-                      onClick={() => setSelectedRow(true)}
+                      onClick={() => handleRowClick(attendee)}
                     >
                       <td className="px-6 py-3">{attendee.name}</td>
+                      <td className="px-6 py-3">{attendee.room}</td>
+                      <td className="px-6 py-3">{attendee.status}</td>
                       <td className="px-6 py-3">{attendee.district}</td>
                       <td className="px-6 py-3">{attendee.email}</td>
                       <td className="px-6 py-3">{attendee.phone}</td>
@@ -311,7 +353,7 @@ const Cattendees = () => {
                       <h3 className="text-3xl font-semibold">Edit Attendee</h3>
                       <button
                         className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                        onClick={() => setSelectedRow(false)}
+                        onClick={() => setShowModal(false)}
                       >
                         <span className="text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
                           ×
@@ -320,17 +362,20 @@ const Cattendees = () => {
                     </div>
                     <div className="relative p-6 flex-auto">
                       <form action="POST">
+                        {" "}
                         <div className="mb-4">
                           <label
                             htmlFor="name"
                             className="block text-sm font-bold text-gray-700"
                           >
-                            Participanteeee's Name:
+                            Participant's Name:
                           </label>
                           <input
                             type="text"
                             id="name"
                             name="name"
+                            value={formData.name}
+                            onChange={handleChange}
                             placeholder="Juan Dela Cruz"
                             className="mt-1 p-2 w-full border rounded-md"
                           />
@@ -347,6 +392,7 @@ const Cattendees = () => {
                             name="district"
                             className="mt-1 p-2 w-full border rounded-md"
                             onChange={handleChange}
+                            value={formData.district}
                           >
                             <option value="SSKLD">SSKLD</option>
                             <option value="NELD">NELD</option>
@@ -375,6 +421,8 @@ const Cattendees = () => {
                             id="email"
                             name="email"
                             placeholder="name@email.com"
+                            onChange={handleChange}
+                            value={formData.email}
                             className="mt-1 p-2 w-full border rounded-md"
                           />
                         </div>
@@ -390,6 +438,8 @@ const Cattendees = () => {
                             id="phone"
                             name="phone"
                             placeholder="0123456789"
+                            onChange={handleChange}
+                            value={formData.phone}
                             className="mt-1 p-2 w-full border rounded-md"
                           />
                         </div>
@@ -404,7 +454,26 @@ const Cattendees = () => {
                             type="text"
                             id="status"
                             name="status"
-                            placeholder="single"
+                            placeholder="Student"
+                            onChange={handleChange}
+                            value={formData.status}
+                            className="mt-1 p-2 w-full border rounded-md"
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label
+                            htmlFor="status"
+                            className="block text-sm font-bold text-gray-700"
+                          >
+                            Room Assignment:
+                          </label>
+                          <input
+                            type="text"
+                            id="room"
+                            name="room"
+                            placeholder="Room No."
+                            onChange={handleChange}
+                            value={formData.room}
                             className="mt-1 p-2 w-full border rounded-md"
                           />
                         </div>
@@ -421,7 +490,7 @@ const Cattendees = () => {
                       <button
                         className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                         type="button"
-                        onClick={() => setSelectedRow(false)}
+                        onClick={handleEdit}
                       >
                         Edit
                       </button>
