@@ -81,12 +81,19 @@ const Attendees = () => {
           </div>
           <div className="bg-light-white rounded-3xl w-128 h-100 pt-6">
             <div className="flex items-center">
-              <div className="flex-none h-10 w-14"></div>
-              <div className="grow h-10">
+              <div className="flex-none h-10 w-25">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="ml-20 w-full p-2 rounded-md"
+                />
+              </div>
+              <div className="grow h-10 mr-25">
                 <h1 className="font-mono font-bold text-center text-white text-2xl">
                   List of Attendees
                 </h1>
               </div>
+              <div className="flex-none h-10 w-25"></div>
             </div>
             <div className="bg-dark-purple rounded-xl h-90 m-8 mt-6">
               <table className="w-full text-lg rtl:text-right table-fixed">
@@ -116,23 +123,23 @@ const Attendees = () => {
                   ))}
                 </tbody>
               </table>
-              <div className="flex justify-end p-6">
-                <div className="text-white">
-                  <button
-                    className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                    onClick={() => paginate(currentPage - 1)}
-                    disabled={currentPage === 1}
-                  >
-                    Previous
-                  </button>
-                  <button
-                    className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                    onClick={() => paginate(currentPage + 1)}
-                    disabled={indexOfLastItem >= attendees.length}
-                  >
-                    Next
-                  </button>
-                </div>
+            </div>
+            <div className="flex justify-end p-3 mr-20">
+              <div className="text-white">
+                <button
+                  className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                  onClick={() => paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+                <button
+                  className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                  onClick={() => paginate(currentPage + 1)}
+                  disabled={indexOfLastItem >= attendees.length}
+                >
+                  Next
+                </button>
               </div>
             </div>
           </div>

@@ -17,6 +17,7 @@ export default {
         127: "60rem",
       },
       height: {
+        90: "572px",
         100: "50rem",
         128: "40rem"
       },

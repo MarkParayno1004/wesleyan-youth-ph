@@ -117,7 +117,13 @@ const Dashboard = () => {
         <div className="h-screen flex-1 p-7">
           <div className="bg-light-white rounded-3xl w-128 h-100 pt-6">
             <div className="flex items-center">
-              <div className="flex-none h-10 w-14"></div>
+              <div className="flex-none h-10 w-25">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="ml-20 w-full p-2 rounded-md"
+                />
+              </div>
               <div className="grow h-10">
                 <h1 className="font-mono font-bold text-center text-white text-2xl">
                   District Coordinator
@@ -277,7 +283,8 @@ const Dashboard = () => {
                   ))}
                 </tbody>
               </table>
-              <div className="flex justify-end p-6">
+            </div>
+            <div className="flex justify-end p-3 mr-20">
                 <div className="text-white">
                   <button
                     className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
@@ -295,7 +302,6 @@ const Dashboard = () => {
                   </button>
                 </div>
               </div>
-            </div>
             {selectedRow && (
               <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
                 <div className="relative w-full my-6 mx-auto max-w-3xl">
