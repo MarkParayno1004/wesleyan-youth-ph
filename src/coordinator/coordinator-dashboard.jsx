@@ -13,6 +13,8 @@ const Cattendees = () => {
   const [userDistrict, setUserDistrict] = useState(null);
   const [selectedAttendee, setSelectedAttendee] = useState({});
   const [totalAttendees, setTotalAttendees] = useState(0);
+  const [totalWorking, setTotalWorking] = useState(0);
+  const [totalStudent, setTotalStudent] = useState(0);
   const [formData, setFormData] = useState({
     name: "",
     district: "",
@@ -127,6 +129,50 @@ const Cattendees = () => {
     }
   }, [userLoggedIn, userDistrict]);
 
+  useEffect(() => {
+    if (userLoggedIn && userDistrict) {
+      const q = query(
+        collection(firestore, "delegates"),
+        where("district", "==", userDistrict),
+        where("status", "==", "Working")
+      );
+
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const delegatesData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setTotalWorking(delegatesData.length);
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [userLoggedIn, userDistrict]);
+
+  useEffect(() => {
+    if (userLoggedIn && userDistrict) {
+      const q = query(
+        collection(firestore, "delegates"),
+        where("district", "==", userDistrict),
+        where("status", "==", "Student")
+      );
+
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const delegatesData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setTotalStudent(delegatesData.length);
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [userLoggedIn, userDistrict]);
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = attendees.slice(indexOfFirstItem, indexOfLastItem);
@@ -144,6 +190,12 @@ const Cattendees = () => {
           <div className="bg-light-white p-2 mb-2 rounded-lg w-1/5">
             <h1 className="text-white">
               Total Number of Attendees: {totalAttendees}
+            </h1>
+            <h1 className="text-white">
+              Total Number of Working: {totalWorking}
+            </h1>
+            <h1 className="text-white">
+              Total Number of Students: {totalStudent}
             </h1>
           </div>
           <div className="bg-light-white rounded-3xl w-128 h-100 pt-6">
@@ -209,6 +261,7 @@ const Cattendees = () => {
                               name="district"
                               className="mt-1 p-2 w-full border rounded-md"
                               onChange={handleChange}
+                              defaultValue=""
                             >
                               <option value="" disabled selected>
                                 Select a District

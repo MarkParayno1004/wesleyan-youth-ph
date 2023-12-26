@@ -7,6 +7,8 @@ const Attendees = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 10;
   const [totalAttendees, setTotalAttendees] = useState(0);
+  const [totalWorking, setTotalWorking] = useState(0);
+  const [totalStudent, setTotalStudent] = useState(0);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -14,6 +16,7 @@ const Attendees = () => {
     email: "",
     phone: "",
   });
+
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       setUserLoggedIn(!!user);
@@ -58,6 +61,48 @@ const Attendees = () => {
     }
   }, [userLoggedIn]);
 
+  useEffect(() => {
+    if (userLoggedIn) {
+      const q = query(
+        collection(firestore, "delegates"),
+        where("status", "==", "Working")
+      );
+
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const delegatesData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setTotalWorking(delegatesData.length);
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [userLoggedIn]);
+
+  useEffect(() => {
+    if (userLoggedIn) {
+      const q = query(
+        collection(firestore, "delegates"),
+        where("status", "==", "Student")
+      );
+
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const delegatesData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setTotalStudent(delegatesData.length);
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [userLoggedIn]);
+
   const [attendees, setAttendees] = useState([]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -77,6 +122,12 @@ const Attendees = () => {
           <div className="bg-light-white p-2 mb-2 rounded-lg w-1/5">
             <h1 className="text-white">
               Total Number of Attendees: {totalAttendees}
+            </h1>
+            <h1 className="text-white">
+              Total Number of Working: {totalWorking}
+            </h1>
+            <h1 className="text-white">
+              Total Number of Students: {totalStudent}
             </h1>
           </div>
           <div className="bg-light-white rounded-3xl w-128 h-100 pt-6">
