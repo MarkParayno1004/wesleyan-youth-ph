@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { submitAddCoor } from "./admin-add-coor";
+import { submitAddCoor, updateCoor } from "./admin-add-coor";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { firestore, auth } from "../firebase/firebase-config";
 const Dashboard = () => {
   const [showModal, setShowModal] = React.useState(false);
   const [selectedRow, setSelectedRow] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState(1);
-  const itemsPerPage = 10; // Adjust as needed
+  const [selectedCoor, setselectedCoor] = useState({});
+  const itemsPerPage = 10;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -25,6 +26,16 @@ const Dashboard = () => {
       ...formData,
       [name]: value,
     });
+  };
+  const handleRowClick = (coordinator) => {
+    setselectedCoor(coordinator);
+    setFormData({
+      name: coordinator.name || "",
+      district: coordinator.district || "",
+      email: coordinator.email || "",
+      phone: coordinator.phone || "",
+    });
+    setSelectedRow(true);
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -49,11 +60,26 @@ const Dashboard = () => {
       console.error("Error adding coordinator:", error.message);
     }
   };
+  const handleEdit = async () => {
+    try {
+      const coorId = selectedCoor.id;
+      await updateCoor(coorId, formData);
+
+      setFormData({
+        name: "",
+        district: "",
+        email: "",
+        phone: "",
+      });
+      setSelectedRow(false);
+    } catch (error) {
+      console.error("Error editing attendee:", error.message);
+    }
+  };
 
   useEffect(() => {
-    // Check the authentication status
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUserLoggedIn(!!user); // Update the userLoggedIn state based on user existence
+      setUserLoggedIn(!!user);
     });
 
     return () => {
@@ -69,7 +95,10 @@ const Dashboard = () => {
       );
 
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const coordinatorsData = querySnapshot.docs.map((doc) => doc.data());
+        const coordinatorsData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
         setCoordinators(coordinatorsData);
       });
 
@@ -150,6 +179,9 @@ const Dashboard = () => {
                               className="mt-1 p-2 w-full border rounded-md"
                               onChange={handleChange}
                             >
+                              <option value="" disabled selected>
+                                Select a District
+                              </option>
                               <option value="SSKLD">SSKLD</option>
                               <option value="NELD">NELD</option>
                               <option value="MD">MD</option>
@@ -233,9 +265,9 @@ const Dashboard = () => {
                 <tbody>
                   {currentItems.map((coordinator) => (
                     <tr
-                      key={coordinator.uid}
+                      key={coordinator.id}
                       className="hover:bg-light-white hover:text-white text-center"
-                      onClick={() => setSelectedRow(true)}
+                      onClick={() => handleRowClick(coordinator)}
                     >
                       <td className="px-6 py-3">{coordinator.name}</td>
                       <td className="px-6 py-3">{coordinator.district}</td>
@@ -284,8 +316,21 @@ const Dashboard = () => {
                     <div className="relative p-6 flex-auto">
                       <form action="POST">
                         <div className="mb-4">
-                          <label htmlFor="name" className="block text-sm font-bold text-gray-700">Coorinator's Name:</label>
-                          <input type="text" id="name" name="name" placeholder="Juan Dela Cruz" className="mt-1 p-2 w-full border rounded-md" />
+                          <label
+                            htmlFor="name"
+                            className="block text-sm font-bold text-gray-700"
+                          >
+                            Coordinator's Name:
+                          </label>
+                          <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="Juan Dela Cruz"
+                            value={formData.name}
+                            onChange={handleChange}
+                            className="mt-1 p-2 w-full border rounded-md"
+                          />
                         </div>
                         <div className="mb-4">
                           <label
@@ -299,7 +344,11 @@ const Dashboard = () => {
                             name="district"
                             className="mt-1 p-2 w-full border rounded-md"
                             onChange={handleChange}
+                            value={formData.district}
                           >
+                            <option value="" disabled selected>
+                              Select a District
+                            </option>
                             <option value="SSKLD">SSKLD</option>
                             <option value="NELD">NELD</option>
                             <option value="MD">MD</option>
@@ -316,12 +365,38 @@ const Dashboard = () => {
                           </select>
                         </div>
                         <div className="mb-4">
-                          <label htmlFor="email" className="block text-sm font-bold text-gray-700">Email: </label>
-                          <input type="email" id="email" name="email" placeholder="name@email.com" className="mt-1 p-2 w-full border rounded-md" />
+                          <label
+                            htmlFor="email"
+                            className="block text-sm font-bold text-gray-700"
+                          >
+                            Email:{" "}
+                          </label>
+                          <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="name@email.com"
+                            onChange={handleChange}
+                            value={formData.email}
+                            className="mt-1 p-2 w-full border rounded-md"
+                          />
                         </div>
                         <div className="mb-4">
-                          <label htmlFor="phone" className="block text-sm font-bold text-gray-700">Contact Number:</label>
-                          <input type="number" id="phone" name="phone" placeholder="0123456789" className="mt-1 p-2 w-full border rounded-md" />
+                          <label
+                            htmlFor="phone"
+                            className="block text-sm font-bold text-gray-700"
+                          >
+                            Contact Number:
+                          </label>
+                          <input
+                            type="number"
+                            id="phone"
+                            name="phone"
+                            onChange={handleChange}
+                            value={formData.phone}
+                            placeholder="0123456789"
+                            className="mt-1 p-2 w-full border rounded-md"
+                          />
                         </div>
                       </form>
                     </div>
@@ -336,7 +411,7 @@ const Dashboard = () => {
                       <button
                         className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                         type="button"
-                        onClick={() => setSelectedRow(false)}
+                        onClick={handleEdit}
                       >
                         Edit
                       </button>

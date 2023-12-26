@@ -25,7 +25,6 @@ const Attendees = () => {
         const unsubscribeUser = onSnapshot(userQuery, (snapshot) => {
           snapshot.forEach((doc) => {
             const userData = doc.data();
-            setUserDistrict(userData.district);
           });
         });
 

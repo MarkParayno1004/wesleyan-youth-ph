@@ -76,8 +76,11 @@ const MainPage = () => {
           <li
             className={`flex  rounded-md p-2 cursor-pointer hover:bg-black hover:text-white text-black text-sm items-center gap-x-4 `}
           >
-            <img alt="Logout" />
-            <span className={`${!open && "hidden"} origin-left duration-200`}>
+            <span
+              className={`${
+                !open && "hidden"
+              } origin-left duration-200 text-red-500`}
+            >
               <button onClick={handleLogout}>Logout</button>
             </span>
           </li>

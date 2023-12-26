@@ -1,5 +1,5 @@
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebase-config";
 
 const generateRandomPassword = () => {
@@ -49,6 +49,18 @@ export const submitAddCoor = async (formData) => {
     };
   } catch (error) {
     console.error("Error adding coordinator:", error.message);
+    throw error;
+  }
+};
+
+export const updateCoor = async (coorId, updatedData) => {
+  const coorRef = doc(firestore, "users", coorId);
+
+  try {
+    await updateDoc(coorRef, updatedData);
+    console.log("Delegate updated successfully!");
+  } catch (error) {
+    console.error("Error updating delegate:", error.message);
     throw error;
   }
 };
