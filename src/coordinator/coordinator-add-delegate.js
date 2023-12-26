@@ -17,8 +17,6 @@ export const submitAddDelegate = async (formData) => {
       ...formData,
     });
 
-    console.log("Coordinator added with ID: ", docRef.id);
-
     return {
       coordinatorId: docRef.id,
     };
