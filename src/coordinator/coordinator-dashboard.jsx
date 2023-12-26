@@ -210,6 +210,9 @@ const Cattendees = () => {
                               className="mt-1 p-2 w-full border rounded-md"
                               onChange={handleChange}
                             >
+                              <option value="" disabled selected>
+                                Select a District
+                              </option>
                               <option value="SSKLD">SSKLD</option>
                               <option value="NELD">NELD</option>
                               <option value="MD">MD</option>
@@ -394,6 +397,9 @@ const Cattendees = () => {
                             onChange={handleChange}
                             value={formData.district}
                           >
+                            <option value="" disabled selected>
+                              Select a District
+                            </option>
                             <option value="SSKLD">SSKLD</option>
                             <option value="NELD">NELD</option>
                             <option value="MD">MD</option>
