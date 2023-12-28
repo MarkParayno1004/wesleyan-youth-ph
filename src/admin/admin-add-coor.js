@@ -39,10 +39,6 @@ export const submitAddCoor = async (formData) => {
       ...formData,
     });
 
-    console.log("Coordinator added with ID: ", docRef.id);
-    console.log("User account created with ID: ", user.uid);
-    console.log("User account created with Password: ", password);
-
     return {
       coordinatorId: docRef.id,
       userId: user.uid,

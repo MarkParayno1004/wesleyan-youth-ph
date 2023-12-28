@@ -7,6 +7,8 @@ const Attendees = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 10;
   const [totalAttendees, setTotalAttendees] = useState(0);
+  const [totalWorking, setTotalWorking] = useState(0);
+  const [totalStudent, setTotalStudent] = useState(0);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -14,6 +16,25 @@ const Attendees = () => {
     email: "",
     phone: "",
   });
+  const [sortOrder, setSortOrder] = useState("asc");
+
+  const handleSort = () => {
+    const sortedAttendees = [...attendees];
+    sortedAttendees.sort((a, b) => {
+      const roomA = a.room || ""; // Use an empty string if room is undefined
+      const roomB = b.room || ""; // Use an empty string if room is undefined
+
+      if (sortOrder === "asc") {
+        return roomA.localeCompare(roomB);
+      } else {
+        return roomB.localeCompare(roomA);
+      }
+    });
+    setAttendees(sortedAttendees);
+    // Toggle sorting order for the next click
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  };
+
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       setUserLoggedIn(!!user);
@@ -58,6 +79,48 @@ const Attendees = () => {
     }
   }, [userLoggedIn]);
 
+  useEffect(() => {
+    if (userLoggedIn) {
+      const q = query(
+        collection(firestore, "delegates"),
+        where("status", "==", "Working")
+      );
+
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const delegatesData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setTotalWorking(delegatesData.length);
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [userLoggedIn]);
+
+  useEffect(() => {
+    if (userLoggedIn) {
+      const q = query(
+        collection(firestore, "delegates"),
+        where("status", "==", "Student")
+      );
+
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const delegatesData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setTotalStudent(delegatesData.length);
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [userLoggedIn]);
+
   const [attendees, setAttendees] = useState([]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -78,6 +141,12 @@ const Attendees = () => {
             <h1 className="text-white">
               Total Number of Attendees: {totalAttendees}
             </h1>
+            <h1 className="text-white">
+              Total Number of Working: {totalWorking}
+            </h1>
+            <h1 className="text-white">
+              Total Number of Students: {totalStudent}
+            </h1>
           </div>
           <div className="bg-light-white rounded-3xl w-128 h-100 pt-6">
             <div className="flex items-center">
@@ -93,7 +162,12 @@ const Attendees = () => {
                 <thead>
                   <tr>
                     <th className="px-6 py-3">Name</th>
-                    <th className="px-6 py-3">Room Assignment</th>
+                    <th
+                      className="px-6 py-3 cursor-pointer"
+                      onClick={handleSort}
+                    >
+                      Room Assignment
+                    </th>
                     <th className="px-6 py-3">Status</th>
                     <th className="px-6 py-3">District</th>
                     <th className="px-6 py-3">Email</th>
