@@ -22,6 +22,24 @@ const Cattendees = () => {
     phone: "",
     status: "",
   });
+  const [sortOrder, setSortOrder] = useState("asc");
+
+  const handleSort = () => {
+    const sortedAttendees = [...attendees];
+    sortedAttendees.sort((a, b) => {
+      const roomA = a.room || ""; // Use an empty string if room is undefined
+      const roomB = b.room || ""; // Use an empty string if room is undefined
+
+      if (sortOrder === "asc") {
+        return roomA.localeCompare(roomB);
+      } else {
+        return roomB.localeCompare(roomA);
+      }
+    });
+    setAttendees(sortedAttendees);
+    // Toggle sorting order for the next click
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  };
 
   const handleRowClick = (attendee) => {
     setSelectedAttendee(attendee);
@@ -358,7 +376,12 @@ const Cattendees = () => {
                 <thead>
                   <tr>
                     <th className="px-6 py-3">Name</th>
-                    <th className="px-6 py-3">Room Assignment</th>
+                    <th
+                      className="px-6 py-3 cursor-pointer"
+                      onClick={handleSort}
+                    >
+                      Room Assignment
+                    </th>
                     <th className="px-6 py-3">Status</th>
                     <th className="px-6 py-3">District</th>
                     <th className="px-6 py-3">Email</th>
